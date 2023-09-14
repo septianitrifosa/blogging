@@ -52,15 +52,17 @@
         </div>
     </div>
 
+    <main class="container">
     @yield('content')
+    </main>
 
     <footer class="blog-footer">
-        <p>Blog template built for <a href="https://getbootstrap.com/">Bootstrap</a> by <a
-                href="https://twitter.com/mdo">@mdo</a>.</p>
+        <p>Copyright © {{ date('Y') }} <a href="/">Blogging</a>.</p>
         <p>
             <a href="#">Back to top</a>
         </p>
     </footer>
+...
 </body>
 
 </html>
