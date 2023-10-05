@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -20,7 +21,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        //
+        return view('articles.create');
     }
 
     /**
@@ -28,8 +29,32 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|min:3|max:255',
+            'body' => 'required|string'
+        ]);
+
+        if ($request->hasFile('image')){
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,gif,svg|max:2048'
+            ]);
+
+           // Upload gambar dan dapatkan path gambar yang diupload
+           $imagePath = $request->file('image')->store('public/images');
+
+           $validated['image'] = $imagePath;
+        }
+        // Buat artikel baru
+        $article = Article::create([
+            'title' => $validated['title'],
+            'body' => $validated['body'],
+            'image' => $validated['image'] ?? null,
+            'published_at' => $request->has('is_published') ? Carbon::now() : false,
+        ]);
+
+        return $article;
     }
+
 
     /**
      * Display the specified resource.
