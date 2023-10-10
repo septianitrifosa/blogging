@@ -13,7 +13,9 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        //
+        //$articles = Article::all();
+        $articles = Article::paginate(10);
+        return view('articles.index', compact('articles'));
     }
 
     /**
@@ -52,7 +54,7 @@ class ArticleController extends Controller
             'published_at' => $request->has('is_published') ? Carbon::now() : false,
         ]);
 
-        return $article;
+        return redirect()->route('articles.index')->with('success', 'Article Created.');
     }
 
 
@@ -61,7 +63,7 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        //
+        return view('articles.show', compact('article'));
     }
 
     /**
