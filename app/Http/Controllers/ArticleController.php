@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -71,7 +72,7 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        //
+        return view('articles.edit', compact('article'));
     }
 
     /**
@@ -79,7 +80,36 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|min:3|max:255',
+            'body' => 'required|string'
+        ]);
+
+        if ($request->hasFile('image')){
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,gif,svg|max:2048'
+            ]);
+
+           // Upload gambar dan dapatkan path gambar yang diupload
+           $imagePath = $request->file('image')->store('public/images');
+
+           // Hapus gambar lama jika ada
+           if ($article->image) {
+            Storage::delete($article->image);
+           }
+
+           $validated['image'] = $imagePath;
+        }
+        // Update artikel
+        $article->update([
+            'title' => $validated['title'],
+            'body' => $validated['body'],
+            'image' => $validated['image'] ?? $article->image,
+            //Jika tidak ada gambar baru, gunakan gambar lama
+            'published_at' => $request->has('is_published') ? Carbon::now() : null,
+        ]);
+
+        return redirect()->route('articles.index')->with('success', 'Article Updated.');
     }
 
     /**
@@ -87,6 +117,12 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+       // Hapus gambar jika ada
+        if ($article->image) {
+            Storage::delete($article->image);
+        }
+        $article->delete();
+        return redirect()->route('articles.index')->with('success', 'Article deleted successfully.');
+
     }
 }
