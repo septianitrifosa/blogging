@@ -27,6 +27,8 @@
                     <th scope="col">Title</th>
                     <th scope="col">Body</th>
                     <th scope="col">Created At</th>
+
+                    <th scope="col">Updated At</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
