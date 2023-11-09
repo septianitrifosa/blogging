@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BiodataController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ContactController;
@@ -39,3 +40,10 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+
+
+Route::get('/biodata', [BiodataController::class, 'show'])->name('biodata.show');
+Route::get('/biodata/edit', [BiodataController::class, 'edit'])->name('biodata.edit');
+Route::put('/biodata/edit', [BiodataController::class, 'update'])->name('biodata.update');

@@ -17,6 +17,11 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+     public function biodata()
+    {
+        return $this->hasOne(Biodata::class);
+    }
     protected $fillable = [
         'name',
         'email',
