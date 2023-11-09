@@ -57,6 +57,13 @@ class ArticleController extends Controller
 
         return redirect()->route('articles.index')->with('success', 'Article Created.');
     }
+public function __construct()
+    {
+        //Hanya user yang sudah login yang bsa akses ini
+        $this->middleware('auth')->except(['show', 'methhodSatu']);
+        //Hanya admin yang bisa akses route ini
+        $this->middleware('admin')->except(['show']);
+    }
 
 
     /**
