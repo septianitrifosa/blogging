@@ -41,11 +41,20 @@
                 </div>
                 <div class="mb-3 col-md-12 col-sm-12">
                     <select class="form-select form-select-lg mb-3" name="category_id">
-                        <option>No Category</option>
+                        <option value=>No Category</option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}"
                                 {{ $category->id == $article->category_id ? 'selected' : '' }}>
                                 {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3 col-md-12 col-sm-12">
+                    <select class="form-select form-select-lg mb-3" name="tags[]" multiple>
+                        @foreach ($tags as $tag)
+                            <option value="{{ $tag->id }}" {{ $article->tags->contains($tag->id) ? 'selected' : '' }}>
+                                {{ $tag->name }}
                             </option>
                         @endforeach
                     </select>

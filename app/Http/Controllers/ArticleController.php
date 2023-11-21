@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\Tag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -26,7 +27,8 @@ class ArticleController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('articles.create', compact('categories'));
+        $tags = Tag::all();
+        return view('articles.create', compact('categories', 'tags'));
     }
 
     /**
@@ -34,6 +36,7 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'title' => 'required|string|min:3|max:255',
             'body' => 'required|string',
@@ -43,8 +46,6 @@ class ArticleController extends Controller
         if ($request->hasFile('image')){
             $request->validate([
                 'image' => 'required|image|mimes:jpeg,png,gif,svg|max:2048',
-
-
             ]);
 
            // Upload gambar dan dapatkan path gambar yang diupload
@@ -60,6 +61,11 @@ class ArticleController extends Controller
             'published_at' => $request->has('is_published') ? Carbon::now() : false,
             'category_id' => $validated['category_id'] ?? null,
         ]);
+
+        //Tambah tags
+        if ($request->has('tags')) {
+            $article->tags()->attach($request->input('tags'));
+        } //function attach untuk input many to many
 
         return redirect()->route('articles.index')->with('success', 'Article Created.');
     }
@@ -86,7 +92,8 @@ public function __construct()
     public function edit(Article $article)
     {
         $categories = Category::all();
-        return view('articles.edit', compact('article', 'categories'));
+        $tags = Tag::all();
+        return view('articles.edit', compact('article', 'categories', 'tags'));
     }
 
     /**
@@ -97,7 +104,7 @@ public function __construct()
         $validated = $request->validate([
             'title' => 'required|string|min:3|max:255',
             'body' => 'required|string',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'nullable',
         ]);
 
         if ($request->hasFile('image')){
@@ -126,7 +133,12 @@ public function __construct()
 
         ]);
 
-        return redirect()->route('articles.index')->with('success', 'Article Updated.');
+        //Update tags
+        if ($request->has('tags')) {
+            $article->tags()->sync($request->input('tags'));
+        }
+        return redirect()->route('articles.index')->with('success', 'Article updated successfully.');
+
     }
 
     /**

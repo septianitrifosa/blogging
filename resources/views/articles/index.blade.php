@@ -27,6 +27,7 @@
                     <th scope="col">Title</th>
                     <th scope="col">Body</th>
                     <th scope="col">Category</th>
+                    <th scope="col">Tags</th>
                     <th scope="col">Created At</th>
                     <th scope="col">Updated At</th>
                     <th scope="col">Action</th>
@@ -39,6 +40,11 @@
                         <td><a href="{{ route('articles.show', $article) }}">{{ $article->title }}</a></td>
                         <td>{{ Str::limit($article->body, 50, ' ...') }}</td>
                         <td>{{ $article->category?->name ?? 'No Category' }}</td>
+                        <td>
+                            @foreach ($article->tags as $tag)
+                                <span class="badge bg-primary">{{ $tag->name }}</span>
+                            @endforeach
+                        </td>
                         <td>{{ $article->created_at }}</td>
                         <td>{{ $article->updated_at }}</td>
                         <td>
