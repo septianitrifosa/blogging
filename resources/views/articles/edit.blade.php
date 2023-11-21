@@ -27,6 +27,7 @@
                     <input type="text" class="form-control" id="title" name="title"
                         value="{{ old('title', $article->title) }}">
                 </div>
+
                 <div class="mb-3 col-md-12 col-sm-12">
                     <label for="image" class="form-label">Image</label>
                     <input class="form-control" type="file" id="image" name="image">
@@ -37,6 +38,17 @@
                 <div class="mb-3 col-md-12 col-sm-12">
                     <label for="body" class="form-label">Body</label>
                     <textarea class="form-control" rows="10" name="body">{{ old('body', $article->body) }}</textarea>
+                </div>
+                <div class="mb-3 col-md-12 col-sm-12">
+                    <select class="form-select form-select-lg mb-3" name="category_id">
+                        <option>No Category</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}"
+                                {{ $category->id == $article->category_id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="form-check form-switch mb-3">
                     <label class="form-check-label" for="is_published">Publish?</label>

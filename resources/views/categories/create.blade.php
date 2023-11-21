@@ -33,6 +33,7 @@
                     <label for="description" class="form-label">Description</label>
                     <textarea class="form-control" rows="10" name="description">{{ old('description') }}</textarea>
                 </div>
+
                 <button type="submit" class="btn btn-primary btn-block">Save</button>
             </form>
         </div>

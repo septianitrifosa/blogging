@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -24,7 +25,8 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        return view('articles.create');
+        $categories = Category::all();
+        return view('articles.create', compact('categories'));
     }
 
     /**
@@ -34,12 +36,15 @@ class ArticleController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|min:3|max:255',
-            'body' => 'required|string'
+            'body' => 'required|string',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         if ($request->hasFile('image')){
             $request->validate([
-                'image' => 'required|image|mimes:jpeg,png,gif,svg|max:2048'
+                'image' => 'required|image|mimes:jpeg,png,gif,svg|max:2048',
+
+
             ]);
 
            // Upload gambar dan dapatkan path gambar yang diupload
@@ -53,6 +58,7 @@ class ArticleController extends Controller
             'body' => $validated['body'],
             'image' => $validated['image'] ?? null,
             'published_at' => $request->has('is_published') ? Carbon::now() : false,
+            'category_id' => $validated['category_id'] ?? null,
         ]);
 
         return redirect()->route('articles.index')->with('success', 'Article Created.');
@@ -79,7 +85,8 @@ public function __construct()
      */
     public function edit(Article $article)
     {
-        return view('articles.edit', compact('article'));
+        $categories = Category::all();
+        return view('articles.edit', compact('article', 'categories'));
     }
 
     /**
@@ -89,7 +96,8 @@ public function __construct()
     {
         $validated = $request->validate([
             'title' => 'required|string|min:3|max:255',
-            'body' => 'required|string'
+            'body' => 'required|string',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         if ($request->hasFile('image')){
@@ -114,6 +122,8 @@ public function __construct()
             'image' => $validated['image'] ?? $article->image,
             //Jika tidak ada gambar baru, gunakan gambar lama
             'published_at' => $request->has('is_published') ? Carbon::now() : null,
+            'category_id' => $validated['category_id'] ?? null,
+
         ]);
 
         return redirect()->route('articles.index')->with('success', 'Article Updated.');
